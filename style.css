@@ -1,0 +1,28 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: fixed;
+    width: 100%;
+    height: 100%;
+
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.qlock {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 50vmin;
+    height: 50vmin;
+
+    text-align: center;
+    vertical-align: middle;
+}
+
+.qlock__time {
+    font-size: 10vmin;
+    font-style: italic;
+}
