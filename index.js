@@ -21,8 +21,6 @@ const isUpdateNeeded = (function() {
 
 const update = (function() {
     const timeElem = document.getElementById('time');
-    const [semiCircleLeft, semiCircleRight] = document.getElementsByClassName('qlock__semicircle-inner');
-
     const prepare = val => val < 10 ? `0${val}` : val;
 
     /**
@@ -37,8 +35,15 @@ const update = (function() {
 
         const angle = ss / 60 * 360;
 
-        semiCircleLeft.setAttribute('style', `transform: rotate(${angle <= 180 ? 0 : angle - 180}deg);`);
-        semiCircleRight.setAttribute('style', `transform: rotate(${angle > 180 ? 180 : angle}deg);`);
+        document.documentElement.style.setProperty(
+            '--qlock-ss-left-angle',
+            `${angle <= 180 ? 0 : angle - 180}deg`
+        );
+
+        document.documentElement.style.setProperty(
+            '--qlock-ss-right-angle',
+            `${angle > 180 ? 180 : angle}deg`
+        );
     }
 
     return update;

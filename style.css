@@ -1,3 +1,11 @@
+:root {
+    --qlock-ss-color: #30BAE7;
+    --qlock-ss-left-angle: 0deg;
+    --qlock-ss-right-angle: 0deg;
+
+    --qlock-bg-color: #FFF;
+}
+
 .container {
     display: flex;
     justify-content: center;
@@ -11,6 +19,8 @@
     height: 100%;
 
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+    background-color: var(--qlock-bg-color);
 }
 
 .qlock {
@@ -35,24 +45,32 @@
 
 .qlock__circle {
     position: absolute;
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 100%;
 
     overflow: hidden;
 
     border-radius: 100%;
 }
 
+.qlock__circle_type_ss {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    --qlock-left-rect: rect(0, 25vmin, 50vmin, 0);
+    --qlock-right-rect: rect(0, 50vmin, 50vmin, 25vmin);
+    --qlock-left-angle: var(--qlock-ss-left-angle);
+    --qlock-right-angle: var(--qlock-ss-right-angle);
+    --qlock-progress-height: 2vmin;
+    --qlock-progress-color: var(--qlock-ss-color);
+}
+
 .qlock__semicircle {
     position: absolute;
     top: 0;
+    right: 0;
+    bottom: 0;
     left: 0;
-
-    width: 100%;
-    height: 100%;
 }
 
 .qlock__semicircle-inner {
@@ -61,32 +79,34 @@
     width: 100%;
     height: 100%;
 
-    background-color: #30BAE7;
+    background-color: var(--qlock-progress-color);
 }
 
 .qlock__semicircle_type_left {
-    clip: rect(0, 25vmin, 50vmin, 0);
+    clip: var(--qlock-left-rect);
 }
 
 .qlock__semicircle_type_left .qlock__semicircle-inner {
-    clip: rect(0, 50vmin, 50vmin, 25vmin);
+    clip: var(--qlock-right-rect);
+    transform: rotate(var(--qlock-left-angle));
 }
 
 .qlock__semicircle_type_right {
-    clip: rect(0, 50vmin, 50vmin, 25vmin);
+    clip: var(--qlock-right-rect);
 }
 
 .qlock__semicircle_type_right .qlock__semicircle-inner {
-    clip: rect(0, 25vmin, 50vmin, 0);
+    clip: var(--qlock-left-rect);
+    transform: rotate(var(--qlock-right-angle));
 }
 
 .qlock__cutout {
     position: absolute;
-    top: 2vmin;
-    right: 2vmin;
-    bottom: 2vmin;
-    left: 2vmin;
+    top: var(--qlock-progress-height);
+    right: var(--qlock-progress-height);
+    bottom: var(--qlock-progress-height);
+    left: var(--qlock-progress-height);
 
-    background-color: #FFF;
+    background-color: var(--qlock-bg-color);
     border-radius: 100%;
 }
