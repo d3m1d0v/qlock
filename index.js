@@ -1,4 +1,6 @@
-const isUpdateNeeded = (function() {
+(function() {
+    const timeElem = document.getElementById('time');
+    const prepare = val => val < 10 ? `0${val}` : val;
     let prev = new Date();
 
     /**
@@ -15,13 +17,6 @@ const isUpdateNeeded = (function() {
 
         return needUpdate;
     }
-
-    return isUpdateNeeded;
-})();
-
-const update = (function() {
-    const timeElem = document.getElementById('time');
-    const prepare = val => val < 10 ? `0${val}` : val;
 
     /**
      * @param {Date} date
@@ -52,15 +47,13 @@ const update = (function() {
         });
     }
 
-    return update;
-})();
+    function tick() {
+        const date = new Date();
 
-function tick() {
-    const date = new Date();
-
-    if (isUpdateNeeded(date)) {
-        update(date);
+        if (isUpdateNeeded(date)) {
+            update(date);
+        }
     }
-}
 
-setInterval(tick, 10);
+    setInterval(tick, 10);
+})();
