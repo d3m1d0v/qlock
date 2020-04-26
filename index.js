@@ -33,17 +33,23 @@ const update = (function() {
 
         timeElem.textContent = `${hh}:${mm}:${ss}`;
 
-        const angle = ss / 60 * 360;
+        [
+            ['hh', hh, 24],
+            ['mm', mm, 60],
+            ['ss', ss, 60],
+        ].forEach(([type, val, base]) => {
+            const angle = val / base * 360;
 
-        document.documentElement.style.setProperty(
-            '--qlock-ss-left-angle',
-            `${angle <= 180 ? 0 : angle - 180}deg`
-        );
+            document.documentElement.style.setProperty(
+                `--qlock-${type}-left-angle`,
+                `${angle <= 180 ? 0 : angle - 180}deg`,
+            );
 
-        document.documentElement.style.setProperty(
-            '--qlock-ss-right-angle',
-            `${angle > 180 ? 180 : angle}deg`
-        );
+            document.documentElement.style.setProperty(
+                `--qlock-${type}-right-angle`,
+                `${angle > 180 ? 180 : angle}deg`,
+            );
+        });
     }
 
     return update;

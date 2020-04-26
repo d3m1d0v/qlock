@@ -1,9 +1,22 @@
 :root {
-    --qlock-ss-color: #30BAE7;
+    --qlock-hh-color: #DE7A22;
+    --qlock-hh-progress-height: 2vmin;
+    --qlock-hh-left-angle: 0deg;
+    --qlock-hh-right-angle: 0deg;
+
+    --qlock-mm-color: #F4CC70;
+    --qlock-mm-progress-height: 1.5vmin;
+    --qlock-mm-left-angle: 0deg;
+    --qlock-mm-right-angle: 0deg;
+
+    --qlock-ss-color: #6AB187;
+    --qlock-ss-progress-height: 1vmin;
     --qlock-ss-left-angle: 0deg;
     --qlock-ss-right-angle: 0deg;
 
     --qlock-bg-color: #FFF;
+    --qlock-size: 50vmin;
+    --qlock-text-size: 10vmin;
 }
 
 .container {
@@ -30,8 +43,8 @@
 
     position: relative;
 
-    width: 50vmin;
-    height: 50vmin;
+    width: var(--qlock-size);
+    height: var(--qlock-size);
 
     text-align: center;
 }
@@ -39,29 +52,56 @@
 .qlock__time {
     z-index: 10;
 
-    font-size: 10vmin;
+    font-size: var(--qlock-text-size);
     font-style: italic;
 }
 
 .qlock__circle {
     position: absolute;
+    top: var(--qlock-circle-padding);
+    right: var(--qlock-circle-padding);
+    bottom: var(--qlock-circle-padding);
+    left: var(--qlock-circle-padding);
 
     overflow: hidden;
 
     border-radius: 100%;
+
+    --qlock-circle-size: calc(var(--qlock-size) - (var(--qlock-circle-padding) * 2));
+    --qlock-circle-half-size: calc(var(--qlock-circle-size) / 2);
+
+    --qlock-left-rect: rect(0, var(--qlock-circle-half-size), var(--qlock-circle-size), 0);
+    --qlock-right-rect: rect(0, var(--qlock-circle-size), var(--qlock-circle-size), var(--qlock-circle-half-size));
+}
+
+.qlock__circle_type_hh {
+    --qlock-circle-padding: 0;
+
+    /* TODO: fix and remove doubled --qlock-*-rect */
+    --qlock-left-rect: rect(0, calc(var(--qlock-size) / 2), var(--qlock-size), 0);
+    --qlock-right-rect: rect(0, var(--qlock-size), var(--qlock-size), calc(var(--qlock-size) / 2));
+
+    --qlock-left-angle: var(--qlock-hh-left-angle);
+    --qlock-right-angle: var(--qlock-hh-right-angle);
+    --qlock-progress-height: var(--qlock-hh-progress-height);
+    --qlock-progress-color: var(--qlock-hh-color);
+}
+
+.qlock__circle_type_mm {
+    --qlock-circle-padding: var(--qlock-hh-progress-height);
+
+    --qlock-left-angle: var(--qlock-mm-left-angle);
+    --qlock-right-angle: var(--qlock-mm-right-angle);
+    --qlock-progress-height: var(--qlock-mm-progress-height);
+    --qlock-progress-color: var(--qlock-mm-color);
 }
 
 .qlock__circle_type_ss {
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    --qlock-circle-padding: calc(var(--qlock-hh-progress-height) + var(--qlock-mm-progress-height));
 
-    --qlock-left-rect: rect(0, 25vmin, 50vmin, 0);
-    --qlock-right-rect: rect(0, 50vmin, 50vmin, 25vmin);
     --qlock-left-angle: var(--qlock-ss-left-angle);
     --qlock-right-angle: var(--qlock-ss-right-angle);
-    --qlock-progress-height: 2vmin;
+    --qlock-progress-height: var(--qlock-ss-progress-height);
     --qlock-progress-color: var(--qlock-ss-color);
 }
 
