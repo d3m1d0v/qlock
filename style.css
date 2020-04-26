@@ -18,14 +18,75 @@
     justify-content: center;
     align-items: center;
 
+    position: relative;
+
     width: 50vmin;
     height: 50vmin;
 
     text-align: center;
-    vertical-align: middle;
 }
 
 .qlock__time {
+    z-index: 10;
+
     font-size: 10vmin;
     font-style: italic;
+}
+
+.qlock__circle {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    border-radius: 100%;
+}
+
+.qlock__semicircle {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+}
+
+.qlock__semicircle-inner {
+    position: absolute;
+
+    width: 100%;
+    height: 100%;
+
+    background-color: #30BAE7;
+}
+
+.qlock__semicircle_type_left {
+    clip: rect(0, 25vmin, 50vmin, 0);
+}
+
+.qlock__semicircle_type_left .qlock__semicircle-inner {
+    clip: rect(0, 50vmin, 50vmin, 25vmin);
+}
+
+.qlock__semicircle_type_right {
+    clip: rect(0, 50vmin, 50vmin, 25vmin);
+}
+
+.qlock__semicircle_type_right .qlock__semicircle-inner {
+    clip: rect(0, 25vmin, 50vmin, 0);
+}
+
+.qlock__cutout {
+    position: absolute;
+    top: 2vmin;
+    right: 2vmin;
+    bottom: 2vmin;
+    left: 2vmin;
+
+    background-color: #FFF;
+    border-radius: 100%;
 }
