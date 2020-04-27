@@ -1,22 +1,17 @@
 :root {
     --qlock-hh-color: #DE7A22;
-    --qlock-hh-progress-height: 2vmin;
     --qlock-hh-left-angle: 0deg;
     --qlock-hh-right-angle: 0deg;
 
     --qlock-mm-color: #F4CC70;
-    --qlock-mm-progress-height: 1.5vmin;
     --qlock-mm-left-angle: 0deg;
     --qlock-mm-right-angle: 0deg;
 
     --qlock-ss-color: #6AB187;
-    --qlock-ss-progress-height: 1vmin;
     --qlock-ss-left-angle: 0deg;
     --qlock-ss-right-angle: 0deg;
 
     --qlock-bg-color: #FFF;
-    --qlock-size: 50vmin;
-    --qlock-text-size: 10vmin;
 }
 
 .container {
@@ -47,6 +42,62 @@
     height: var(--qlock-size);
 
     text-align: center;
+}
+
+.qlock_size_xs {
+    --qlock-size: 30vmin;
+    --qlock-text-size: 6vmin;
+    --qlock-hh-progress-height: 1.2vmin;
+    --qlock-mm-progress-height: .9vmin;
+    --qlock-ss-progress-height: .6vmin;
+}
+
+.qlock_size_s {
+    --qlock-size: 40vmin;
+    --qlock-text-size: 8vmin;
+    --qlock-hh-progress-height: 1.6vmin;
+    --qlock-mm-progress-height: 1.2vmin;
+    --qlock-ss-progress-height: .8vmin;
+}
+
+.qlock_size_m {
+    --qlock-size: 50vmin;
+    --qlock-text-size: 10vmin;
+    --qlock-hh-progress-height: 2vmin;
+    --qlock-mm-progress-height: 1.5vmin;
+    --qlock-ss-progress-height: 1vmin;
+}
+
+.qlock_size_l {
+    --qlock-size: 60vmin;
+    --qlock-text-size: 12vmin;
+    --qlock-hh-progress-height: 2.4vmin;
+    --qlock-mm-progress-height: 1.8vmin;
+    --qlock-ss-progress-height: 1.2vmin;
+}
+
+.qlock_size_xl {
+    --qlock-size: 75vmin;
+    --qlock-text-size: 15vmin;
+    --qlock-hh-progress-height: 3vmin;
+    --qlock-mm-progress-height: 2.25vmin;
+    --qlock-ss-progress-height: 1.5vmin;
+}
+
+.qlock_size_xxl {
+    --qlock-size: 82.5vmin;
+    --qlock-text-size: 16.5vmin;
+    --qlock-hh-progress-height: 3.3vmin;
+    --qlock-mm-progress-height: 2.5vmin;
+    --qlock-ss-progress-height: 1.65vmin;
+}
+
+.qlock_size_xxxl {
+    --qlock-size: 90vmin;
+    --qlock-text-size: 18vmin;
+    --qlock-hh-progress-height: 3.6vmin;
+    --qlock-mm-progress-height: 2.7vmin;
+    --qlock-ss-progress-height: 1.8vmin;
 }
 
 .qlock__time {
@@ -149,4 +200,12 @@
 
     background-color: var(--qlock-bg-color);
     border-radius: 100%;
+}
+
+.settings {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    padding: 1em;
 }
