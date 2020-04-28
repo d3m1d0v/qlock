@@ -16,13 +16,24 @@
     };
 
     const SIZES = ['xs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl'];
-    const THEMES = ['light', 'dark'];
+    const THEMES = ['light', 'dark', 'custom'];
 
     const [qlockElem] = document.getElementsByClassName('qlock');
+
     /** @type {HTMLSelectElement} */
     const sizeSelect = document.getElementById('qlock-size');
     /** @type {HTMLSelectElement} */
     const themeSelect = document.getElementById('qlock-theme');
+
+    /** @type {HTMLInputElement} */
+    const bgColorPicker = document.getElementById('qlock-bg-color');
+    /** @type {HTMLInputElement} */
+    const hhColorPicker = document.getElementById('qlock-hh-color');
+    /** @type {HTMLInputElement} */
+    const mmColorPicker = document.getElementById('qlock-mm-color');
+    /** @type {HTMLInputElement} */
+    const ssColorPicker = document.getElementById('qlock-ss-color');
+
     const timeElem = document.getElementById('time');
     const prepare = val => val < 10 ? `0${val}` : val;
 
@@ -141,6 +152,38 @@
         updateQuery({ theme });
     });
 
+    /**
+     * @param {'bg' | 'hh' | 'mm' | 'ss'} type
+     * @param {String} color
+     */
+    function updateCustomColor(type, color) {
+        document.documentElement.style.setProperty(`--qlock-${type}-custom-color`, color);
+    }
+
+    bgColorPicker.addEventListener('change', function() {
+        const color = this.value;
+
+        updateCustomColor('bg', color);
+    });
+
+    hhColorPicker.addEventListener('change', function() {
+        const color = this.value;
+
+        updateCustomColor('hh', color);
+    });
+
+    mmColorPicker.addEventListener('change', function() {
+        const color = this.value;
+
+        updateCustomColor('mm', color);
+    });
+
+    ssColorPicker.addEventListener('change', function() {
+        const color = this.value;
+
+        updateCustomColor('ss', color);
+    });
+
     function init() {
         const query = new URLSearchParams(window.location.search);
         const querySize = query.get('size');
@@ -157,6 +200,13 @@
 
         updateTime(prev);
         updateProgress(prev);
+
+        [
+            ['bg', bgColorPicker],
+            ['hh', hhColorPicker],
+            ['mm', mmColorPicker],
+            ['ss', ssColorPicker],
+        ].forEach(([type, picker]) => updateCustomColor(type, picker.value));
     }
 
     init();

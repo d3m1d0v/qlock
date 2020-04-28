@@ -40,6 +40,13 @@
     --qlock-ss-color: #CDCDC0;
 }
 
+.qlock_theme_custom {
+    --qlock-bg-color: var(--qlock-bg-custom-color);
+    --qlock-hh-color: var(--qlock-hh-custom-color);
+    --qlock-mm-color: var(--qlock-mm-custom-color);
+    --qlock-ss-color: var(--qlock-ss-custom-color);
+}
+
 .qlock_size_xs {
     --qlock-size: 30vmin;
     --qlock-text-size: 6vmin;
@@ -217,4 +224,12 @@
     left: 0;
 
     padding: 1em;
+}
+
+.qlock__custom-colors {
+    display: none;
+}
+
+.qlock_theme_custom .qlock__custom-colors {
+    display: block;
 }
