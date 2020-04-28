@@ -14,7 +14,7 @@
     --qlock-bg-color: #FFF;
 }
 
-.container {
+.qlock {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -29,19 +29,6 @@
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 
     background-color: var(--qlock-bg-color);
-}
-
-.qlock {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    position: relative;
-
-    width: var(--qlock-size);
-    height: var(--qlock-size);
-
-    text-align: center;
 }
 
 .qlock_size_xs {
@@ -105,6 +92,19 @@
 
     font-size: var(--qlock-text-size);
     font-style: italic;
+}
+
+.qlock__face {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+
+    width: var(--qlock-size);
+    height: var(--qlock-size);
+
+    text-align: center;
 }
 
 .qlock__circle {
@@ -202,7 +202,7 @@
     border-radius: 100%;
 }
 
-.settings {
+.qlock__settings {
     position: absolute;
     top: 0;
     left: 0;
