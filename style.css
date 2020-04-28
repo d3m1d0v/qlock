@@ -1,17 +1,12 @@
 :root {
-    --qlock-hh-color: #DE7A22;
     --qlock-hh-left-angle: 0deg;
     --qlock-hh-right-angle: 0deg;
 
-    --qlock-mm-color: #F4CC70;
     --qlock-mm-left-angle: 0deg;
     --qlock-mm-right-angle: 0deg;
 
-    --qlock-ss-color: #6AB187;
     --qlock-ss-left-angle: 0deg;
     --qlock-ss-right-angle: 0deg;
-
-    --qlock-bg-color: #FFF;
 }
 
 .qlock {
@@ -29,6 +24,20 @@
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 
     background-color: var(--qlock-bg-color);
+}
+
+.qlock_theme_light {
+    --qlock-bg-color: #FFF;
+    --qlock-hh-color: #DE7A22;
+    --qlock-mm-color: #F4CC70;
+    --qlock-ss-color: #6AB187;
+}
+
+.qlock_theme_dark {
+    --qlock-bg-color: #626D71;
+    --qlock-hh-color: #B38867;
+    --qlock-mm-color: #DDBC95;
+    --qlock-ss-color: #CDCDC0;
 }
 
 .qlock_size_xs {
