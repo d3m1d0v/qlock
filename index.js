@@ -1,234 +1,274 @@
 (function() {
-    const SECONDS = 'ss';
-    const MINUTES = 'mm';
-    const HOURS = 'hh';
+    const UNIT = {
+        SECONDS: 'ss',
+        MINUTES: 'mm',
+        HOURS: 'hh',
+    }
 
     const MS_IN = {
-        [SECONDS]: 1000,
-        [MINUTES]: 60 * 1000,
-        [HOURS]: 60 * 60 * 1000,
+        [UNIT.SECONDS]: 1000,
+        [UNIT.MINUTES]: 60 * 1000,
+        [UNIT.HOURS]: 60 * 60 * 1000,
     };
 
     const LIMIT = {
-        [SECONDS]: 60 * 1000,
-        [MINUTES]: 60 * 60 * 1000,
-        [HOURS]: 24 * 60 * 60 * 1000,
+        [UNIT.SECONDS]: 60 * 1000,
+        [UNIT.MINUTES]: 60 * 60 * 1000,
+        [UNIT.HOURS]: 24 * 60 * 60 * 1000,
     };
 
     const SIZES = ['xs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl', 'custom'];
     const THEMES = ['light', 'dark', 'custom'];
 
-    const [qlockElem] = document.getElementsByClassName('qlock');
+    class Helper {
+        /**
+        * @param {String} name
+        * @param {String} val
+        * @param {HTMLElement} [elem]
+        */
+        static setCssVar(name, val, elem = document.documentElement) {
+            elem.style.setProperty(name, val);
+        }
 
-    /** @type {HTMLSelectElement} */
-    const sizeSelect = document.getElementById('qlock-size');
-    /** @type {HTMLInputElement} */
-    const sizeSlider = document.getElementById('qlock-size-slider');
-    /** @type {HTMLSelectElement} */
-    const themeSelect = document.getElementById('qlock-theme');
+        /**
+         * @param {Number} value
+         * @returns {String}
+         */
+        static zeroLead(value) {
+            return `${value < 10 ? '0' : ''}${value}`;
+        }
 
-    /** @type {HTMLInputElement} */
-    const bgColorPicker = document.getElementById('qlock-bg-color');
-    /** @type {HTMLInputElement} */
-    const hhColorPicker = document.getElementById('qlock-hh-color');
-    /** @type {HTMLInputElement} */
-    const mmColorPicker = document.getElementById('qlock-mm-color');
-    /** @type {HTMLInputElement} */
-    const ssColorPicker = document.getElementById('qlock-ss-color');
+        /**
+         * @param {Date} prev
+         * @param {Date} curr
+         * @returns {Boolean}
+         */
+        static isTimeUpdateNeeded(prev, curr) {
+            return (
+                curr.getSeconds() !== prev.getSeconds() ||
+                curr.getMinutes() !== prev.getMinutes() ||
+                curr.getHours() !== prev.getHours()
+            );
+        }
 
-    const timeElem = document.getElementById('time');
-    const prepare = val => val < 10 ? `0${val}` : val;
+        /**
+         * @param {{ size?: String; theme?: String; }} params
+         */
+        static updateQuery({ size, theme }) {
+            const searchParams = new URLSearchParams(window.location.search);
 
-    let prev = new Date();
+            size && searchParams.set('size', size);
+            theme && searchParams.set('theme', theme);
 
-    /**
-     * @param {String} name
-     * @param {String} val
-     * @param {HTMLElement} [elem]
-     */
-    function setCssVar(name, val, elem = document.documentElement) {
-        elem.style.setProperty(name, val);
-    }
-
-    /**
-     * @param {Date} date
-     */
-    function isTimeUpdateNeeded(date) {
-        const needUpdate = (
-            date.getSeconds() !== prev.getSeconds() ||
-            date.getMinutes() !== prev.getMinutes() ||
-            date.getHours() !== prev.getHours()
-        );
-
-        needUpdate && (prev = date);
-
-        return needUpdate;
-    }
-
-    /**
-     * @param {Date} date
-     */
-    function updateTime(date) {
-        const hh = prepare(date.getHours());
-        const mm = prepare(date.getMinutes());
-        const ss = prepare(date.getSeconds());
-
-        timeElem.textContent = `${hh}:${mm}:${ss}`;
-    }
-
-    /**
-     * @param {Date} date
-     */
-    function updateProgress(date) {
-        const ms = date.getMilliseconds();
-        const ss = date.getSeconds();
-        const mm = date.getMinutes();
-        const hh = date.getHours();
-
-        const ssInMs = ss * MS_IN[SECONDS] + ms;
-        const mmInMs = mm * MS_IN[MINUTES] + ssInMs;
-        const hhInMs = hh * MS_IN[HOURS] + mmInMs;
-
-        [
-            [SECONDS, ssInMs],
-            [MINUTES, mmInMs],
-            [HOURS, hhInMs],
-        ].forEach(([type, val]) => {
-            const angle = val / LIMIT[type] * 360;
-
-            let leftAngle = 0;
-            let rightAngle = 0;
-
-            if (angle <= 180) {
-                rightAngle = angle;
-            } else {
-                leftAngle = angle - 180;
-                rightAngle = 180;
-            }
-
-            setCssVar(`--qlock-${type}-left-angle`, `${leftAngle}deg`);
-            setCssVar(`--qlock-${type}-right-angle`, `${rightAngle}deg`);
-        });
-    }
-
-    function tick() {
-        const date = new Date();
-
-        updateProgress(date);
-
-        if (isTimeUpdateNeeded(date)) {
-            updateTime(date);
+            window.history.replaceState(window.history.state, '', `?${searchParams.toString()}`);
         }
     }
 
-    function updateQuery({ size, theme }) {
-        const searchParams = new URLSearchParams(window.location.search);
+    class Qlock {
+        /**
+         * @param {HTMLElement} root
+         */
+        constructor(root) {
+            this.root = root;
 
-        size && searchParams.set('size', size);
-        theme && searchParams.set('theme', theme);
+            this.timeElem = root.querySelector('.qlock__time');
 
-        window.history.replaceState(window.history.state, '', `?${searchParams.toString()}`);
+            /** @type {HTMLInputElement} */
+            this.sizeSlider = root.querySelector('#qlock-size-slider');
+
+            /** @type {HTMLSelectElement} */
+            this.sizeSelect = root.querySelector('#qlock-size');
+            /** @type {HTMLSelectElement} */
+            this.themeSelect = root.querySelector('#qlock-theme');
+
+            /** @type {HTMLInputElement} */
+            this.bgColorPicker = root.querySelector('#qlock-bg-color');
+            /** @type {HTMLInputElement} */
+            this.hhColorPicker = root.querySelector('#qlock-hh-color');
+            /** @type {HTMLInputElement} */
+            this.mmColorPicker = root.querySelector('#qlock-mm-color');
+            /** @type {HTMLInputElement} */
+            this.ssColorPicker = root.querySelector('#qlock-ss-color');
+
+            this.sizeSlider.addEventListener('input', this.onSizeSliderChange);
+            this.sizeSlider.addEventListener('change', this.onSizeSliderChange);
+
+            this.sizeSelect.addEventListener('change', this.onSizeSelectChange);
+            this.themeSelect.addEventListener('change', this.onThemeSelectChange);
+
+            this.bgColorPicker.addEventListener('input', this.onBgColorPickerChange);
+            this.hhColorPicker.addEventListener('input', this.onHhColorPickerChange);
+            this.mmColorPicker.addEventListener('input', this.onMmColorPickerChange);
+            this.ssColorPicker.addEventListener('input', this.onSsColorPickerChange);
+
+            this.bgColorPicker.addEventListener('change', this.onBgColorPickerChange);
+            this.hhColorPicker.addEventListener('change', this.onHhColorPickerChange);
+            this.mmColorPicker.addEventListener('change', this.onMmColorPickerChange);
+            this.ssColorPicker.addEventListener('change', this.onSsColorPickerChange);
+
+            this.init();
+        }
+
+        init() {
+            const query = new URLSearchParams(window.location.search);
+            const querySize = query.get('size');
+            const queryTheme = query.get('theme');
+
+            const size = SIZES.includes(querySize) ? querySize : 'm';
+            const theme = THEMES.includes(queryTheme) ? queryTheme : 'light';
+
+            this.sizeSelect.value = size;
+            this.themeSelect.value = theme;
+
+            this.updateSize(size);
+            this.updateTheme(theme);
+
+            this.updateCustomSizeValue(this.sizeSlider.value);
+
+            [
+                ['bg', this.bgColorPicker],
+                ['hh', this.hhColorPicker],
+                ['mm', this.mmColorPicker],
+                ['ss', this.ssColorPicker],
+            ].forEach(([type, picker]) => this.updateCustomColorValue(type, picker.value));
+
+            this.force();
+        }
+
+        force() {
+            const date = new Date();
+
+            this.prevDate = date;
+
+            this.updateTime(date);
+            this.updateProgress(date);
+        }
+
+        tick = () => {
+            const date = new Date();
+
+            this.updateProgress(date);
+
+            if (Helper.isTimeUpdateNeeded(this.prevDate, date)) {
+                this.updateTime(date);
+            }
+
+            this.prevDate = date;
+        };
+
+        /**
+         * @param {Date} date
+         */
+        updateTime(date) {
+            const hh = Helper.zeroLead(date.getHours());
+            const mm = Helper.zeroLead(date.getMinutes());
+            const ss = Helper.zeroLead(date.getSeconds());
+
+            this.timeElem.textContent = `${hh}:${mm}:${ss}`;
+        }
+
+        /**
+         * @param {Date} date
+         */
+        updateProgress(date) {
+            const ms = date.getMilliseconds();
+            const ss = date.getSeconds();
+            const mm = date.getMinutes();
+            const hh = date.getHours();
+
+            const ssInMs = ss * MS_IN[UNIT.SECONDS] + ms;
+            const mmInMs = mm * MS_IN[UNIT.MINUTES] + ssInMs;
+            const hhInMs = hh * MS_IN[UNIT.HOURS] + mmInMs;
+
+            [
+                [UNIT.SECONDS, ssInMs],
+                [UNIT.MINUTES, mmInMs],
+                [UNIT.HOURS, hhInMs],
+            ].forEach(([type, val]) => {
+                const angle = val / LIMIT[type] * 360;
+
+                let leftAngle = 0;
+                let rightAngle = 0;
+
+                if (angle <= 180) {
+                    rightAngle = angle;
+                } else {
+                    leftAngle = angle - 180;
+                    rightAngle = 180;
+                }
+
+                Helper.setCssVar(`--qlock-${type}-left-angle`, `${leftAngle}deg`, this.root);
+                Helper.setCssVar(`--qlock-${type}-right-angle`, `${rightAngle}deg`, this.root);
+            });
+        }
+
+        /**
+         * @param {String} mod
+         * @param {String} val
+         */
+        updateMod(mod, val) {
+            const { root } = this;
+
+            const modCns = root.className.split(' ').filter(cn => cn.startsWith(`qlock_${mod}`));
+            root.classList.remove(...modCns);
+
+            root.classList.add(`qlock_${mod}_${val}`);
+        }
+
+        /**
+         * @param {'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl' | 'xxxl' | 'custom'} size
+         */
+        updateSize(size) {
+            this.updateMod('size', size);
+        }
+
+        /**
+         * @param {'light' | 'dark' | 'custom'} theme
+         */
+        updateTheme(theme) {
+            this.updateMod('theme', theme);
+        }
+
+        /**
+         * @param {Number} value
+         */
+        updateCustomSizeValue(value) {
+            Helper.setCssVar('--qlock-custom-size', `${value}vmin`, this.root);
+        }
+
+        /**
+         * @param {'bg' | 'hh' | 'mm' | 'ss'} type
+         * @param {String} color
+         */
+        updateCustomColorValue(type, color) {
+            Helper.setCssVar(`--qlock-${type}-custom-color`, color, this.root);
+        }
+
+        onSizeSliderChange = () => this.updateCustomSizeValue(this.sizeSlider.valueAsNumber);
+
+        onSizeSelectChange = () => {
+            const size = this.sizeSelect.value;
+
+            this.updateSize(size);
+            Helper.updateQuery({ size });
+        };
+
+        onThemeSelectChange = () => {
+            const theme = this.themeSelect.value;
+
+            this.updateTheme(theme);
+            Helper.updateQuery({ theme });
+        };
+
+        onBgColorPickerChange = () => this.updateCustomColorValue('bg', this.bgColorPicker.value);
+        onHhColorPickerChange = () => this.updateCustomColorValue('hh', this.hhColorPicker.value);
+        onMmColorPickerChange = () => this.updateCustomColorValue('mm', this.mmColorPicker.value);
+        onSsColorPickerChange = () => this.updateCustomColorValue('ss', this.ssColorPicker.value);
     }
 
-    /**
-     * @param {String} mod
-     * @param {String} val
-     */
-    function updateMod(mod, val) {
-        const modCns = qlockElem.className.split(' ').filter(cn => cn.startsWith(`qlock_${mod}`));
-        qlockElem.classList.remove(...modCns);
+    const qlock = new Qlock(document.querySelector('.qlock'));
 
-        qlockElem.classList.add(`qlock_${mod}_${val}`);
-    }
+    window.qlock = qlock;
 
-    function updateSize(size) {
-        updateMod('size', size);
-    }
-
-    function updateTheme(theme) {
-        updateMod('theme', theme);
-    }
-
-    function updateCustomSize(value) {
-        setCssVar('--qlock-custom-size', `${value}vmin`);
-    }
-
-    sizeSelect.addEventListener('change', function() {
-        const size = this.value;
-
-        updateSize(size);
-        updateQuery({ size });
-    });
-
-    sizeSlider.addEventListener('change', () => updateCustomSize(sizeSlider.value));
-    sizeSlider.addEventListener('input', () => updateCustomSize(sizeSlider.value));
-
-    themeSelect.addEventListener('change', function() {
-        const theme = this.value;
-
-        updateTheme(theme);
-        updateQuery({ theme });
-    });
-
-    /**
-     * @param {'bg' | 'hh' | 'mm' | 'ss'} type
-     * @param {String} color
-     */
-    function updateCustomColor(type, color) {
-        setCssVar(`--qlock-${type}-custom-color`, color);
-    }
-
-    bgColorPicker.addEventListener('change', function() {
-        const color = this.value;
-
-        updateCustomColor('bg', color);
-    });
-
-    hhColorPicker.addEventListener('change', function() {
-        const color = this.value;
-
-        updateCustomColor('hh', color);
-    });
-
-    mmColorPicker.addEventListener('change', function() {
-        const color = this.value;
-
-        updateCustomColor('mm', color);
-    });
-
-    ssColorPicker.addEventListener('change', function() {
-        const color = this.value;
-
-        updateCustomColor('ss', color);
-    });
-
-    function init() {
-        const query = new URLSearchParams(window.location.search);
-        const querySize = query.get('size');
-        const queryTheme = query.get('theme');
-
-        const size = SIZES.includes(querySize) ? querySize : 'm';
-        const theme = THEMES.includes(queryTheme) ? queryTheme : 'light';
-
-        sizeSelect.value = size;
-        themeSelect.value = theme;
-
-        updateSize(size);
-        updateTheme(theme);
-
-        updateTime(prev);
-        updateProgress(prev);
-
-        updateCustomSize(sizeSlider.value);
-
-        [
-            ['bg', bgColorPicker],
-            ['hh', hhColorPicker],
-            ['mm', mmColorPicker],
-            ['ss', ssColorPicker],
-        ].forEach(([type, picker]) => updateCustomColor(type, picker.value));
-    }
-
-    init();
-    setInterval(tick, 10);
+    setInterval(qlock.tick, 15);
 })();
