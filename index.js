@@ -15,13 +15,15 @@
         [HOURS]: 24 * 60 * 60 * 1000,
     };
 
-    const SIZES = ['xs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl'];
+    const SIZES = ['xs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl', 'custom'];
     const THEMES = ['light', 'dark', 'custom'];
 
     const [qlockElem] = document.getElementsByClassName('qlock');
 
     /** @type {HTMLSelectElement} */
     const sizeSelect = document.getElementById('qlock-size');
+    /** @type {HTMLInputElement} */
+    const sizeSlider = document.getElementById('qlock-size-slider');
     /** @type {HTMLSelectElement} */
     const themeSelect = document.getElementById('qlock-theme');
 
@@ -38,6 +40,15 @@
     const prepare = val => val < 10 ? `0${val}` : val;
 
     let prev = new Date();
+
+    /**
+     * @param {String} name
+     * @param {String} val
+     * @param {HTMLElement} [elem]
+     */
+    function setCssVar(name, val, elem = document.documentElement) {
+        elem.style.setProperty(name, val);
+    }
 
     /**
      * @param {Date} date
@@ -95,8 +106,8 @@
                 rightAngle = 180;
             }
 
-            document.documentElement.style.setProperty(`--qlock-${type}-left-angle`, `${leftAngle}deg`);
-            document.documentElement.style.setProperty(`--qlock-${type}-right-angle`, `${rightAngle}deg`);
+            setCssVar(`--qlock-${type}-left-angle`, `${leftAngle}deg`);
+            setCssVar(`--qlock-${type}-right-angle`, `${rightAngle}deg`);
         });
     }
 
@@ -138,12 +149,19 @@
         updateMod('theme', theme);
     }
 
+    function updateCustomSize(value) {
+        setCssVar('--qlock-custom-size', `${value}vmin`);
+    }
+
     sizeSelect.addEventListener('change', function() {
         const size = this.value;
 
         updateSize(size);
         updateQuery({ size });
     });
+
+    sizeSlider.addEventListener('change', () => updateCustomSize(sizeSlider.value));
+    sizeSlider.addEventListener('input', () => updateCustomSize(sizeSlider.value));
 
     themeSelect.addEventListener('change', function() {
         const theme = this.value;
@@ -157,7 +175,7 @@
      * @param {String} color
      */
     function updateCustomColor(type, color) {
-        document.documentElement.style.setProperty(`--qlock-${type}-custom-color`, color);
+        setCssVar(`--qlock-${type}-custom-color`, color);
     }
 
     bgColorPicker.addEventListener('change', function() {
@@ -200,6 +218,8 @@
 
         updateTime(prev);
         updateProgress(prev);
+
+        updateCustomSize(sizeSlider.value);
 
         [
             ['bg', bgColorPicker],
