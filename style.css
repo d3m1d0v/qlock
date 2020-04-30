@@ -80,42 +80,31 @@
 }
 
 .qlock__face {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
     position: relative;
 
     width: var(--qlock-size);
     height: var(--qlock-size);
-
-    text-align: center;
-
-    --qlock-text-size: calc(var(--qlock-size) / 5);
-    --qlock-hh-progress-height: calc(var(--qlock-size) / 25);
-    --qlock-mm-progress-height: calc(var(--qlock-size) / 33.3);
-    --qlock-ss-progress-height: calc(var(--qlock-size) / 50);
 }
 
+/* centering */
+.qlock__circle,
+.qlock__cutout,
 .qlock__time {
-    z-index: 10;
+    position: absolute;
+    top: 50%;
+    left: 50%;
 
-    font-size: var(--qlock-text-size);
-    font-style: italic;
+    transform: translate(-50%, -50%);
 }
 
 .qlock__circle {
-    position: absolute;
-    top: var(--qlock-circle-padding);
-    right: var(--qlock-circle-padding);
-    bottom: var(--qlock-circle-padding);
-    left: var(--qlock-circle-padding);
+    width: var(--qlock-circle-size);
+    height: var(--qlock-circle-size);
 
     overflow: hidden;
 
     border-radius: 100%;
 
-    --qlock-circle-size: calc(var(--qlock-size) - (var(--qlock-circle-padding) * 2));
     --qlock-circle-half-size: calc(var(--qlock-circle-size) / 2);
 
     --qlock-left-rect: rect(0, var(--qlock-circle-half-size), var(--qlock-circle-size), 0);
@@ -123,37 +112,34 @@
 }
 
 .qlock__circle_type_hh {
-    --qlock-circle-padding: 0;
-
-    /* TODO: fix and remove doubled --qlock-*-rect */
-    --qlock-left-rect: rect(0, calc(var(--qlock-size) / 2), var(--qlock-size), 0);
-    --qlock-right-rect: rect(0, var(--qlock-size), var(--qlock-size), calc(var(--qlock-size) / 2));
+    --qlock-circle-size: var(--qlock-size);
 
     --qlock-left-angle: var(--qlock-hh-left-angle);
     --qlock-right-angle: var(--qlock-hh-right-angle);
-    --qlock-progress-height: var(--qlock-hh-progress-height);
+
     --qlock-progress-color: var(--qlock-hh-color);
 }
 
 .qlock__circle_type_mm {
-    --qlock-circle-padding: var(--qlock-hh-progress-height);
+    --qlock-circle-size: calc(var(--qlock-size) * .92);
 
     --qlock-left-angle: var(--qlock-mm-left-angle);
     --qlock-right-angle: var(--qlock-mm-right-angle);
-    --qlock-progress-height: var(--qlock-mm-progress-height);
+
     --qlock-progress-color: var(--qlock-mm-color);
 }
 
 .qlock__circle_type_ss {
-    --qlock-circle-padding: calc(var(--qlock-hh-progress-height) + var(--qlock-mm-progress-height));
+    --qlock-circle-size: calc(var(--qlock-size) * .86);
 
     --qlock-left-angle: var(--qlock-ss-left-angle);
     --qlock-right-angle: var(--qlock-ss-right-angle);
-    --qlock-progress-height: var(--qlock-ss-progress-height);
+
     --qlock-progress-color: var(--qlock-ss-color);
 }
 
-.qlock__semicircle {
+.qlock__semicircle,
+.qlock__semicircle-inner {
     position: absolute;
     top: 0;
     right: 0;
@@ -161,12 +147,11 @@
     left: 0;
 }
 
+.qlock__semicircle {
+    background-color: var(--qlock-bg-color);
+}
+
 .qlock__semicircle-inner {
-    position: absolute;
-
-    width: 100%;
-    height: 100%;
-
     background-color: var(--qlock-progress-color);
 }
 
@@ -189,14 +174,16 @@
 }
 
 .qlock__cutout {
-    position: absolute;
-    top: var(--qlock-progress-height);
-    right: var(--qlock-progress-height);
-    bottom: var(--qlock-progress-height);
-    left: var(--qlock-progress-height);
+    width: calc(var(--qlock-size) * .82);
+    height: calc(var(--qlock-size) * .82);
 
     background-color: var(--qlock-bg-color);
     border-radius: 100%;
+}
+
+.qlock__time {
+    font-size: calc(var(--qlock-size) / 5);
+    font-style: italic;
 }
 
 .qlock__settings {
@@ -207,18 +194,12 @@
     padding: 1em;
 }
 
-.qlock__custom-size {
-    display: none;
-}
-
-.qlock_size_custom .qlock__custom-size {
-    display: block;
-}
-
+.qlock__custom-size,
 .qlock__custom-colors {
     display: none;
 }
 
+.qlock_size_custom .qlock__custom-size,
 .qlock_theme_custom .qlock__custom-colors {
     display: block;
 }
